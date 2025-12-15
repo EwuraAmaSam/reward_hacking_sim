@@ -3,10 +3,11 @@ from env.base import Environment
 class GridWorld(Environment):
     "Simple gridworld for the hacking simulation"
 
-    def __init__(self, size=5, goal=(4,4), max_steps=50):
+    def __init__(self, size=5, goal=(4,4), max_steps=50, reward_fn =None):
         self.size = size
         self.goal = goal
         self.max_steps = max_steps
+        self.reward_fn = reward_fn
         self.reset()
 
     # Reset agent to the original position
@@ -39,7 +40,10 @@ class GridWorld(Environment):
         self.steps += 1
 
         # Reward
-        reward = 0.0
+        if self.reward_fn is None:
+            reward = 0.0
+        else:
+            reward = self.reward_fn(self.agent_pos, action, self.agent_pos, self.goal)
         done = self.agent_pos == self.goal or self.steps >= self.max_steps
 
         # Debugging info - to be added on hopefully
